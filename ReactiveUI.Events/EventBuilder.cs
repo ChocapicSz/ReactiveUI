@@ -307,7 +307,7 @@ namespace EventBuilder
         public static string GetRealTypeName(TypeReference t)
         {
             var generic = t as GenericInstanceType;
-            if (generic == null) return RenameBogusWinRTTypes(t.FullName);
+            if (generic == null) return RenameBogusWinRTTypes(t.FullName).Replace('/', '.');
 
             var ret = String.Format("{0}<{1}>",
                 RenameBogusWinRTTypes(generic.Namespace + "." + generic.Name),
