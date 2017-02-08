@@ -104,6 +104,7 @@ namespace EventBuilder
                 .SelectMany(x => SafeGetTypes(x))
                 .Where(x => x.IsPublic && !IsObsolete(x.CustomAttributes))
                 .Where(x => !garbageNamespaceList.Contains(x.Namespace))
+                .Distinct(new TypeDefinitionComparer())
                 .ToArray();
             var publicTypesWithEvents = types
                 .Select(x => new { Type = x, Events = GetPublicEvents(types, x) })
@@ -385,6 +386,20 @@ namespace EventBuilder
                 }
                 current = currRes.BaseType;
             }
+        }
+    }
+
+    internal class TypeDefinitionComparer : IEqualityComparer<TypeDefinition>
+    {
+        public bool Equals(TypeDefinition x, TypeDefinition y)
+        {
+            return x.FullName == y.FullName && 
+                x.Module.Name == y.Module.Name;
+        }
+
+        public int GetHashCode(TypeDefinition obj)
+        {
+            return (obj.FullName + obj.Module.Name).GetHashCode();
         }
     }
 
